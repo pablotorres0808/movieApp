@@ -1,142 +1,180 @@
 @if (serie) {
-<div class="w-full min-h-screen p-6 font-sans">
+<div class="w-full min-h-screen bg-black">
 
-    <div class="container mx-auto max-w-5xl bg-white rounded-3xl shadow-xl overflow-hidden border border-green-50">
-
-        <div class="relative w-full h-64 md:h-96">
-            <div class="absolute inset-0 bg-cover bg-center"
-                [style.backgroundImage]="'url(https://image.tmdb.org/t/p/original' + serie.backdrop_path + ')'">
-            </div>
-            <div class="absolute inset-0 bg-gradient-to-t from-white via-white/20 to-transparent"></div>
+    <!-- Hero Banner -->
+    <div class="relative w-full h-[70vh]">
+        <div class="absolute inset-0 bg-cover bg-center"
+            [style.backgroundImage]="'url(https://image.tmdb.org/t/p/original' + serie.backdrop_path + ')'">
         </div>
+        <div class="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent"></div>
 
-        <div class="relative px-8 pb-8 -mt-32 md:-mt-48 flex flex-col md:flex-row gap-8">
-
-            <div class="w-64 shrink-0 mx-auto md:mx-0">
-                <img class="w-full h-auto rounded-3xl shadow-2xl border-4 border-white"
-                    [src]="'https://image.tmdb.org/t/p/w500' + serie.poster_path" [alt]="serie.name">
-
-                <a [href]="'https://vidlink.pro/tv/' + serie.id" target="_blank"
-                    class="w-full mt-4 bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-6 rounded-full shadow-lg flex items-center justify-center gap-2 transition-all transform hover:scale-105">
-                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                        <path
-                            d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z">
-                        </path>
-                    </svg>
-                    Ver Serie
-                </a>
-            </div>
-
-            <div class="flex-1 pt-4 md:pt-32 space-y-4">
-                <h1 class="text-4xl font-bold text-emerald-900 leading-tight">
+        <!-- Content Overlay -->
+        <div class="absolute bottom-0 left-0 right-0 px-8 pb-12">
+            <div class="container mx-auto max-w-7xl">
+                <h1 class="text-5xl md:text-7xl font-bold text-white mb-4">
                     {{ serie.name }}
-                    <span class="text-2xl font-normal text-gray-500">({{ serie.first_air_date | date:'yyyy' }})</span>
                 </h1>
-
-                <p class="text-xl italic text-gray-600 font-medium">
-                    {{ serie.tagline ? '"' + serie.tagline + '"' : '' }}
+                <p class="text-xl text-gray-300 italic mb-6">
+                    {{ serie.tagline }}
                 </p>
-
-                <div class="flex flex-wrap gap-2 text-sm">
-                    <span
-                        class="px-3 py-1 bg-green-50 text-emerald-700 rounded-full border border-green-100 font-semibold">
-                        Temporadas: {{ serie.number_of_seasons }}
+                <div class="flex flex-wrap gap-3 mb-6">
+                    <span class="px-4 py-2 bg-white/10 backdrop-blur-sm text-white rounded font-semibold">
+                        {{ serie.first_air_date | date:'yyyy' }}
                     </span>
-                    <span
-                        class="px-3 py-1 bg-green-50 text-emerald-700 rounded-full border border-green-100 font-semibold">
-                        Episodios: {{ serie.number_of_episodes }}
+                    <span class="px-4 py-2 bg-white/10 backdrop-blur-sm text-white rounded font-semibold">
+                        {{ serie.number_of_seasons }} Temporadas
+                    </span>
+                    <span class="px-4 py-2 bg-yellow-500/90 text-black rounded font-bold flex items-center gap-1">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path
+                                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
+                        {{ serie.vote_average | number:'1.1-1' }}
                     </span>
                 </div>
-
-                <div class="flex flex-wrap gap-2">
-                    @for (genre of serie.genres; track genre.id) {
-                    <span class="bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full text-xs font-bold">
-                        {{ genre.name }}
-                    </span>
-                    }
+                <div class="flex gap-4">
+                    <button (click)="toggleFavorito()" [class.bg-red-600]="esFavorito"
+                        [class.hover:bg-red-700]="esFavorito" [class.bg-white]="!esFavorito"
+                        [class.text-black]="!esFavorito" [class.text-white]="esFavorito"
+                        class="font-bold py-3 px-8 rounded flex items-center gap-2 transition-colors">
+                        <svg class="w-6 h-6" [attr.fill]="esFavorito ? 'currentColor' : 'none'" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                        </svg>
+                        {{ esFavorito ? 'En Mi Lista' : 'Añadir a Mi Lista' }}
+                    </button>
                 </div>
+            </div>
+        </div>
+    </div>
 
-                <div class="flex items-center gap-4 py-4">
-                    <div
-                        class="relative w-16 h-16 flex items-center justify-center rounded-full bg-emerald-100 border-4 border-white shadow-md">
-                        <span class="text-xl font-bold text-emerald-700">{{ (serie.vote_average * 10) | number:'1.0-0'
-                            }}<span class="text-xs">%</span></span>
-                    </div>
-                    <div class="flex flex-col">
-                        <span class="font-bold text-gray-800">Puntuación</span>
-                        <span class="text-xs text-gray-500">{{ serie.vote_count }} votos</span>
+    <!-- Main Content -->
+    <div class="container mx-auto max-w-7xl px-8 py-12">
+
+        <!-- Overview -->
+        <div class="mb-12">
+            <h2 class="text-3xl font-bold text-white mb-4">Sinopsis</h2>
+            <p class="text-gray-300 text-lg leading-relaxed max-w-4xl">
+                {{ serie.overview }}
+            </p>
+        </div>
+
+        <!-- Genres -->
+        <div class="mb-12">
+            <h3 class="text-2xl font-bold text-white mb-4">Géneros</h3>
+            <div class="flex flex-wrap gap-3">
+                @for (genre of serie.genres; track genre.id) {
+                <span
+                    class="px-4 py-2 bg-zinc-800 text-white rounded-full text-sm font-semibold hover:bg-zinc-700 transition-colors">
+                    {{ genre.name }}
+                </span>
+                }
+            </div>
+        </div>
+
+        <!-- Season & Episode Selector -->
+        <div class="mb-8">
+            <div class="flex flex-col md:flex-row gap-6 mb-6">
+                <div class="flex-1">
+                    <label class="text-white font-semibold mb-2 block">Temporada</label>
+                    <div class="flex gap-2 overflow-x-auto pb-2">
+                        @for (season of serie.seasons; track season.season_number) {
+                        <button (click)="cambiarTemporada(season.season_number)"
+                            [class.bg-red-600]="temporadaSeleccionada === season.season_number"
+                            [class.text-white]="temporadaSeleccionada === season.season_number"
+                            [class.bg-zinc-800]="temporadaSeleccionada !== season.season_number"
+                            [class.text-gray-400]="temporadaSeleccionada !== season.season_number"
+                            class="px-4 py-2 rounded font-semibold whitespace-nowrap transition-colors hover:bg-red-700 hover:text-white">
+                            T{{ season.season_number }}
+                        </button>
+                        }
                     </div>
                 </div>
-
-                <div class="bg-green-50/50 p-6 rounded-3xl border border-green-50">
-                    <h3 class="text-xl font-bold mb-2 text-emerald-800">Vista General</h3>
-                    <p class="text-gray-700 leading-relaxed text-lg">
-                        {{ serie.overview }}
-                    </p>
-                </div>
-
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-6 pt-4 border-t border-gray-100">
-                    <div>
-                        <p class="font-bold text-gray-500 text-sm">Estado</p>
-                        <p class="font-medium text-gray-800">{{ serie.status }}</p>
-                    </div>
-                    <div>
-                        <p class="font-bold text-gray-500 text-sm">Próximo episodio</p>
-                        <p class="font-medium text-gray-800">{{ serie.next_episode_to_air ?
-                            (serie.next_episode_to_air.air_date | date:'dd/MM/yyyy') : 'N/A' }}</p>
-                    </div>
-                    <div>
-                        <p class="font-bold text-gray-500 text-sm">Popularidad</p>
-                        <p class="font-medium text-emerald-600">{{ serie.popularity | number:'1.0-2' }}</p>
-                    </div>
-                    <div>
-                        <p class="font-bold text-gray-500 text-sm">País</p>
-                        <p class="font-medium text-gray-800">{{ serie.origin_country[0] }}</p>
+                <div class="flex-1">
+                    <label class="text-white font-semibold mb-2 block">Episodio</label>
+                    <div class="flex gap-2 overflow-x-auto pb-2">
+                        @for (ep of episodios; track ep.episode_number) {
+                        <button (click)="cambiarEpisodio(ep.episode_number)"
+                            [class.bg-red-600]="episodioSeleccionado === ep.episode_number"
+                            [class.text-white]="episodioSeleccionado === ep.episode_number"
+                            [class.bg-zinc-800]="episodioSeleccionado !== ep.episode_number"
+                            [class.text-gray-400]="episodioSeleccionado !== ep.episode_number"
+                            class="px-4 py-2 rounded font-semibold whitespace-nowrap transition-colors hover:bg-red-700 hover:text-white">
+                            E{{ ep.episode_number }}
+                        </button>
+                        }
                     </div>
                 </div>
             </div>
         </div>
 
-        @if (serie.production_companies.length > 0) {
-        <div class="px-8 pb-8 pt-4">
-            <p class="font-bold text-gray-500 text-sm mb-3">Producción</p>
-            <div class="flex flex-wrap gap-4 items-center">
-                @for (comp of serie.production_companies; track comp.id) {
-                @if (comp.logo_path) {
-                <div class="bg-gray-50 p-2 rounded-xl">
-                    <img [src]="'https://image.tmdb.org/t/p/w200' + comp.logo_path" [alt]="comp.name"
-                        class="h-6 md:h-8 object-contain opacity-70 grayscale hover:grayscale-0 transition-all">
+        <!-- Player Section -->
+        <div class="mb-12">
+            <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+                <h3 class="text-3xl font-bold text-white">Viendo: T{{ temporadaSeleccionada }} E{{ episodioSeleccionado
+                    }}</h3>
+                <div class="flex bg-zinc-900 p-1 rounded-lg gap-1 overflow-x-auto">
+                    <button (click)="cambiarServidor('vidsrc_to')"
+                        [class.bg-red-600]="servidorSeleccionado === 'vidsrc_to'"
+                        [class.text-white]="servidorSeleccionado === 'vidsrc_to'"
+                        [class.text-gray-400]="servidorSeleccionado !== 'vidsrc_to'"
+                        class="px-4 py-2 rounded text-sm font-semibold transition-all whitespace-nowrap hover:text-white">
+                        🇲🇽 Latino 1
+                    </button>
+                    <button (click)="cambiarServidor('vidsrc_me')"
+                        [class.bg-red-600]="servidorSeleccionado === 'vidsrc_me'"
+                        [class.text-white]="servidorSeleccionado === 'vidsrc_me'"
+                        [class.text-gray-400]="servidorSeleccionado !== 'vidsrc_me'"
+                        class="px-4 py-2 rounded text-sm font-semibold transition-all whitespace-nowrap hover:text-white">
+                        🇲🇽 Latino 2
+                    </button>
+                    <button (click)="cambiarServidor('embed_su')"
+                        [class.bg-red-600]="servidorSeleccionado === 'embed_su'"
+                        [class.text-white]="servidorSeleccionado === 'embed_su'"
+                        [class.text-gray-400]="servidorSeleccionado !== 'embed_su'"
+                        class="px-4 py-2 rounded text-sm font-semibold transition-all whitespace-nowrap hover:text-white">
+                        🌎 Multi
+                    </button>
+                    <button (click)="cambiarServidor('two_embed')"
+                        [class.bg-red-600]="servidorSeleccionado === 'two_embed'"
+                        [class.text-white]="servidorSeleccionado === 'two_embed'"
+                        [class.text-gray-400]="servidorSeleccionado !== 'two_embed'"
+                        class="px-4 py-2 rounded text-sm font-semibold transition-all whitespace-nowrap hover:text-white">
+                        Servidor 4
+                    </button>
+                    <button (click)="cambiarServidor('vidlink')" [class.bg-red-600]="servidorSeleccionado === 'vidlink'"
+                        [class.text-white]="servidorSeleccionado === 'vidlink'"
+                        [class.text-gray-400]="servidorSeleccionado !== 'vidlink'"
+                        class="px-4 py-2 rounded text-sm font-semibold transition-all whitespace-nowrap hover:text-white">
+                        Servidor 5
+                    </button>
+                    <button (click)="cambiarServidor('multiembed')"
+                        [class.bg-red-600]="servidorSeleccionado === 'multiembed'"
+                        [class.text-white]="servidorSeleccionado === 'multiembed'"
+                        [class.text-gray-400]="servidorSeleccionado !== 'multiembed'"
+                        class="px-4 py-2 rounded text-sm font-semibold transition-all whitespace-nowrap hover:text-white">
+                        Servidor 6
+                    </button>
                 </div>
-                } @else {
-                <span class="bg-gray-100 px-3 py-1 rounded-full text-xs text-gray-600">{{comp.name}}</span>
-                }
+            </div>
+            <div class="relative w-full aspect-video rounded-lg overflow-hidden bg-black">
+                <iframe [src]="playerUrl" class="absolute inset-0 w-full h-full" frameborder="0" allowfullscreen
+                    allow="autoplay; encrypted-media"></iframe>
+            </div>
+        </div>
+
+        <!-- Similar Series -->
+        @if (similares.length > 0) {
+        <div>
+            <h3 class="text-3xl font-bold text-white mb-6">Series Similares</h3>
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                @for (similar of similares; track similar.id) {
+                <app-movie-card [movie]="similar"></app-movie-card>
                 }
             </div>
         </div>
         }
-
-        <!-- Player Section -->
-        <div class="px-8 pb-8">
-            <h3 class="text-2xl font-bold mb-4 text-emerald-800 border-b border-green-100 pb-2">Ver Ahora</h3>
-            <div
-                class="relative w-full aspect-video rounded-3xl overflow-hidden shadow-2xl bg-black border-4 border-white">
-                <iframe [src]="playerUrl" class="absolute inset-0 w-full h-full" frameborder="0" allowfullscreen
-                    allow="autoplay; encrypted-media"></iframe>
-            </div>
-            <p class="mt-4 text-center text-sm text-gray-500 italic">
-                * El reproductor es proporcionado por un servicio externo (VidLink).
-            </p>
-        </div>
-
-    </div>
-</div>
-} @else {
-<div class="flex items-center justify-center min-h-screen">
-    <div class="text-center">
-        <div
-            class="inline-block w-16 h-16 border-4 border-emerald-200 border-t-emerald-600 rounded-full animate-spin mb-4">
-        </div>
-        <p class="text-emerald-800 font-bold text-xl">Cargando serie...</p>
     </div>
 </div>
 }

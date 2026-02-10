@@ -1,129 +1,69 @@
-<div class="grid grid-cols-2 gap-4 p-4">
-
-    <div class="bg-white rounded-3xl p-6 shadow-md border border-green-50">
-        <h1 class="text-xl font-bold mb-4 text-emerald-700">Directiva @ if</h1>
-        <div class="m-1">
-            @if(showContent){
-            <p class="text-justify mb-4 text-gray-700 leading-relaxed">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Corporis, labore iure. Et fugiat cum delectus
-                illo placeat explicabo expedita exercitationem soluta perspiciatis libero ab doloremque quam, accusamus
-                nesciunt repellendus veniam.
-            </p>}
-            @else {
-            <p class="mb-4 text-gray-500 italic">Ver bajo su propio riesgo...</p>
-            }
-            <button (click)="verSpoiler()"
-                class="mt-2 text-white bg-emerald-600 hover:bg-emerald-700 px-6 py-2 cursor-pointer shadow-md transform hover:scale-105 transition-all">
-                {{showContent ? 'Ocultar Spoiler' : 'Ver Spoiler'}}
-            </button>
+<div class="w-full min-h-screen bg-black px-6 py-12">
+    <div class="container mx-auto max-w-7xl">
+        <!-- Hero Section -->
+        <div class="mb-16 text-center">
+            <h1 class="text-6xl md:text-8xl font-black text-white mb-6">
+                MOVIE<span class="text-red-600">APP</span>
+            </h1>
+            <p class="text-2xl text-gray-400 mb-8">
+                Películas y series ilimitadas. Mira donde quieras.
+            </p>
+            <div class="flex gap-4 justify-center">
+                <a href="/cartelera"
+                    class="bg-red-600 hover:bg-red-700 text-white font-bold py-4 px-8 rounded text-lg transition-colors">
+                    Explorar Películas
+                </a>
+                <a href="/series"
+                    class="bg-zinc-800 hover:bg-zinc-700 text-white font-bold py-4 px-8 rounded text-lg transition-colors">
+                    Ver Series
+                </a>
+            </div>
         </div>
-    </div>
 
-    <div class="bg-white rounded-3xl p-6 shadow-md border border-green-50">
-        <h1 class="text-xl font-bold mb-4 text-emerald-700">
-            @if(rol != 'admin'){
-            User
-            }
-            @else {
-            Admin
-            }</h1>
-        <div class="m-1">
-            <ul class="list-none p-0 space-y-2">
-                <li class="text-lg font-bold bg-green-50 text-emerald-800 p-3 rounded-2xl">Usuarios</li>
-                @if(rol != 'admin'){
-                <li class="text-lg font-bold bg-green-50 text-emerald-800 p-3 rounded-2xl">Ventas</li>
-                <li class="text-lg font-bold bg-green-50 text-emerald-800 p-3 rounded-2xl">Perfil</li>
-                <button (click)="serAdmin()"
-                    class="mt-4 text-white bg-emerald-600 hover:bg-emerald-700 p-3 w-full shadow-md rounded-2xl">Ser
-                    Admin</button>
-                }
-                @else {
+        <!-- Demo Content Sections -->
+        <div class="space-y-16">
+            <div class="bg-zinc-900 rounded-lg p-8">
+                <h2 class="text-3xl font-bold text-white mb-4">Bienvenido a MovieApp</h2>
+                <p class="text-gray-300 text-lg leading-relaxed">
+                    Disfruta de un catálogo completo de películas y series con múltiples servidores de streaming.
+                    Encuentra tu contenido favorito y añádelo a tu lista personal.
+                </p>
+            </div>
 
-                <li class="text-lg font-bold bg-green-50 text-emerald-800 p-3 rounded-2xl">Ventas</li>
-                <li class="text-lg font-bold bg-green-50 text-emerald-800 p-3 rounded-2xl">Perfil</li>
-                <li class="text-lg font-bold bg-green-50 text-emerald-800 p-3 rounded-2xl">Configuracion</li>
-                }
-            </ul>
-        </div>
-    </div>
-
-    <div class="bg-white rounded-3xl p-6 shadow-md border border-green-50">
-        <h1 class="text-2xl mb-4 font-bold text-emerald-700">Directiva @ for</h1>
-        <div class="flex flex-wrap gap-2">
-            @for (dia of diasSemana; track $index) {
-            <button
-                class="bg-green-100 text-emerald-800 px-4 py-2 hover:bg-green-200 shadow-sm border border-green-200">{{dia}}</button>
-            }
-        </div>
-    </div>
-
-    <div class="bg-white rounded-3xl p-6 shadow-md border border-green-50">
-        <h1 class="text-2xl mb-4 font-bold text-emerald-700">Directiva @ for - con array de objetos</h1>
-        <ol class="space-y-4">
-            @for (contacto of contactos; track $index) {
-            <div class="bg-gray-50 p-4 rounded-2xl">
-                @if (!contacto.visualizarNumero) {
-                <li class="text-lg text-gray-800 mb-2">{{contacto.nombre}} -> {{contacto.email}}</li>
-                <div class="flex gap-2 mb-2">
-                    @for (red of contacto.redesSociales; track $index) {
-                    <button class="bg-green-100 text-emerald-800 text-sm px-3 py-1 shadow-sm">{{red}}</button>
-                    }
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-zinc-900 rounded-lg p-6 hover:bg-zinc-800 transition-colors">
+                    <div class="w-12 h-12 bg-red-600 rounded-lg flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <path
+                                d="M2 6a2 2 0 012-2h6a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6zM14.553 7.106A1 1 0 0014 8v4a1 1 0 00.553.894l2 1A1 1 0 0018 13V7a1 1 0 00-1.447-.894l-2 1z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2">Múltiples Servidores</h3>
+                    <p class="text-gray-400">6 servidores diferentes para garantizar disponibilidad</p>
                 </div>
-                }@else {
-                <li class="text-lg text-gray-800 mb-2">{{contacto.nombre}} -> {{contacto.email}} ->
-                    {{contacto.telefono}}</li>
-                <div class="flex gap-2 mb-2">
-                    @for (red of contacto.redesSociales; track $index) {
-                    <button class="bg-green-100 text-emerald-800 text-sm px-3 py-1 shadow-sm">{{red}}</button>
-                    }
+
+                <div class="bg-zinc-900 rounded-lg p-6 hover:bg-zinc-800 transition-colors">
+                    <div class="w-12 h-12 bg-red-600 rounded-lg flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <path
+                                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2">Audio Latino</h3>
+                    <p class="text-gray-400">Servidores optimizados para contenido en español</p>
                 </div>
-                }
-                <button (click)="verNumero(contacto)"
-                    class="mt-2 text-white bg-emerald-600 hover:bg-emerald-700 px-4 py-2 text-sm shadow-md"> {{
-                    contacto.visualizarNumero ? 'Ocultar teléfono' : 'Ver teléfono' }}</button>
-            </div>
-            }
-        </ol>
-    </div>
 
-    <div class="bg-white rounded-3xl p-6 shadow-md border border-green-50">
-        <h1 class="text-2xl mb-4 font-bold text-emerald-700">Directiva @ switch</h1>
-        <h2 class="text-gray-600 mb-2 font-semibold">Estado de tu Pedido</h2>
-        <div class="buttons flex flex-wrap gap-2 mb-4">
-            <button (click)="cambiarEstado('pendiente')"
-                class="text-white bg-gray-400 hover:bg-gray-500 px-4 py-2 shadow-sm">Pendiente</button>
-            <button (click)="cambiarEstado('en_camino')"
-                class="text-white bg-amber-400 hover:bg-amber-500 px-4 py-2 shadow-sm">En Camino</button>
-            <button (click)="cambiarEstado('entregado')"
-                class="text-white bg-emerald-500 hover:bg-emerald-600 px-4 py-2 shadow-sm">Entregado</button>
-            <button (click)="cambiarEstado('error')"
-                class="text-white bg-red-400 hover:bg-red-500 px-4 py-2 shadow-sm">Simular Error</button>
-        </div>
-        <hr class="border-green-100 my-4">
-        <div class="status-card">
-            @switch (estadoEnvio) {
-            @case ('pendiente') {
-            <div class="alert info p-4 bg-blue-50 text-blue-800 rounded-2xl border border-blue-100">
-                <p><strong>Pedido recibido:</strong> Estamos preparando tu paquete en el almacén.</p>
+                <div class="bg-zinc-900 rounded-lg p-6 hover:bg-zinc-800 transition-colors">
+                    <div class="w-12 h-12 bg-red-600 rounded-lg flex items-center justify-center mb-4">
+                        <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <path
+                                d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2">Mi Lista</h3>
+                    <p class="text-gray-400">Guarda tus favoritos y accede a ellos cuando quieras</p>
+                </div>
             </div>
-            }
-            @case ('en_camino') {
-            <div class="alert warning p-4 bg-amber-50 text-amber-800 rounded-2xl border border-amber-100">
-                <p><strong>En camino:</strong> El repartidor lleva tu pedido y llegará pronto.</p>
-            </div>
-            }
-            @case ('entregado') {
-            <div class="alert success p-4 bg-green-50 text-green-800 rounded-2xl border border-green-100">
-                <p><strong>¡Logrado!:</strong> El paquete ha sido entregado correctamente.</p>
-            </div>
-            }
-            @default {
-            <div class="alert danger p-4 bg-red-50 text-red-800 rounded-2xl border border-red-100">
-                <p><strong>Error:</strong> No pudimos encontrar información de este estado.</p>
-            </div>
-            }
-            }
         </div>
     </div>
-
 </div>

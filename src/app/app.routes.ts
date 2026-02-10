@@ -35,6 +35,10 @@ export const routes: Routes = [
         loadComponent: () => import('../pages/series-detail/series-detail').then(m => m.SeriesDetail)
     },
     {
+        path: 'favoritos',
+        loadComponent: () => import('../pages/favoritos/favoritos').then(m => m.Favoritos)
+    },
+    {
         path: '**',
         pathMatch: 'full',
         redirectTo: 'home'
