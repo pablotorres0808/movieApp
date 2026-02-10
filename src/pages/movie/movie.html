@@ -1,0 +1,129 @@
+@if (movie) {
+<div class="w-full min-h-screen p-6 font-sans">
+
+    <div class="container mx-auto max-w-5xl bg-white rounded-3xl shadow-xl overflow-hidden border border-green-50">
+
+        <div class="relative w-full h-64 md:h-96">
+            <div class="absolute inset-0 bg-cover bg-center"
+                [style.backgroundImage]="'url(https://image.tmdb.org/t/p/original' + movie.backdrop_path + ')'">
+            </div>
+            <div class="absolute inset-0 bg-gradient-to-t from-white via-white/20 to-transparent"></div>
+        </div>
+
+        <div class="relative px-8 pb-8 -mt-32 md:-mt-48 flex flex-col md:flex-row gap-8">
+
+            <div class="w-64 shrink-0 mx-auto md:mx-0">
+                <img class="w-full h-auto rounded-3xl shadow-2xl border-4 border-white"
+                    [src]="'https://image.tmdb.org/t/p/w500' + movie.poster_path" [alt]="movie.title">
+
+                <button
+                    class="w-full mt-4 bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-6 rounded-full shadow-lg flex items-center justify-center gap-2 transition-all transform hover:scale-105">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                        <path
+                            d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z">
+                        </path>
+                    </svg>
+                    Ver Trailer
+                </button>
+            </div>
+
+            <div class="flex-1 pt-4 md:pt-32 space-y-4">
+                <h1 class="text-4xl font-bold text-emerald-900 leading-tight">
+                    {{ movie.title }}
+                    <span class="text-2xl font-normal text-gray-500">({{ movie.release_date | date:'yyyy' }})</span>
+                </h1>
+
+                <p class="text-xl italic text-gray-600 font-medium">
+                    {{ movie.tagline ? '"' + movie.tagline + '"' : '' }}
+                </p>
+
+                <div class="flex flex-wrap gap-2 text-sm">
+                    <span
+                        class="px-3 py-1 bg-green-50 text-emerald-700 rounded-full border border-green-100 font-semibold">
+                        {{ movie.release_date | date:'dd/MM/yyyy' }}
+                    </span>
+                    <span
+                        class="px-3 py-1 bg-green-50 text-emerald-700 rounded-full border border-green-100 font-semibold">
+                        {{ movie.runtime }} min
+                    </span>
+                </div>
+
+                <div class="flex flex-wrap gap-2">
+                    @for (genre of movie.genres; track genre.id) {
+                    <span class="bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full text-xs font-bold">
+                        {{ genre.name }}
+                    </span>
+                    }
+                </div>
+
+                <div class="flex items-center gap-4 py-4">
+                    <div
+                        class="relative w-16 h-16 flex items-center justify-center rounded-full bg-emerald-100 border-4 border-white shadow-md">
+                        <span class="text-xl font-bold text-emerald-700">{{ (movie.vote_average * 10) | number:'1.0-0'
+                            }}<span class="text-xs">%</span></span>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="font-bold text-gray-800">Puntuación</span>
+                        <span class="text-xs text-gray-500">{{ movie.vote_count }} votos</span>
+                    </div>
+                </div>
+
+                <div class="bg-green-50/50 p-6 rounded-3xl border border-green-50">
+                    <h3 class="text-xl font-bold mb-2 text-emerald-800">Vista General</h3>
+                    <p class="text-gray-700 leading-relaxed text-lg">
+                        {{ movie.overview }}
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6 pt-4 border-t border-gray-100">
+                    <div>
+                        <p class="font-bold text-gray-500 text-sm">Título Original</p>
+                        <p class="font-medium text-gray-800">{{ movie.original_title }}</p>
+                    </div>
+                    <div>
+                        <p class="font-bold text-gray-500 text-sm">Estado</p>
+                        <p class="font-medium text-gray-800">{{ movie.status }}</p>
+                    </div>
+                    <div>
+                        <p class="font-bold text-gray-500 text-sm">Presupuesto</p>
+                        <p class="font-medium text-emerald-600">{{ movie.budget | currency:'USD':'symbol':'1.0-0' }}</p>
+                    </div>
+                    <div>
+                        <p class="font-bold text-gray-500 text-sm">Ingresos</p>
+                        <p class="font-medium text-emerald-600">{{ movie.revenue | currency:'USD':'symbol':'1.0-0' }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @if (movie.production_companies.length > 0) {
+        <div class="px-8 pb-8 pt-4">
+            <p class="font-bold text-gray-500 text-sm mb-3">Producción</p>
+            <div class="flex flex-wrap gap-4 items-center">
+                @for (comp of movie.production_companies; track comp.id) {
+                @if (comp.logo_path) {
+                <div class="bg-gray-50 p-2 rounded-xl">
+                    <img [src]="'https://image.tmdb.org/t/p/w200' + comp.logo_path" [alt]="comp.name"
+                        class="h-6 md:h-8 object-contain opacity-70 grayscale hover:grayscale-0 transition-all">
+                </div>
+                } @else {
+                <span class="bg-gray-100 px-3 py-1 rounded-full text-xs text-gray-600">{{comp.name}}</span>
+                }
+                }
+            </div>
+        </div>
+        }
+
+    </div>
+</div>
+} @else {
+<div class="flex items-center justify-center min-h-screen">
+    <div class="text-center">
+        <div
+            class="inline-block w-16 h-16 border-4 border-emerald-200 border-t-emerald-600 rounded-full animate-spin mb-4">
+        </div>
+        <p class="text-emerald-800 font-bold text-xl">Cargando película...</p>
+    </div>
+</div>
+}

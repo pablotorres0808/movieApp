@@ -1,0 +1,30 @@
+@import "tailwindcss";
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap");
+@import "flowbite/src/themes/minimal";
+
+@plugin "flowbite/plugin";
+@source "../node_modules/flowbite";
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: 'Quicksand', 'Nunito', sans-serif;
+  background-color: #f0fdf4;
+  /* Light green background */
+}
+
+button {
+  border: none !important;
+  border-radius: 9999px !important;
+  /* Fully rounded */
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+  transition: transform 0.2s;
+}
+
+button:hover {
+  transform: scale(1.05);
+}

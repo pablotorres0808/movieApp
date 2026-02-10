@@ -1,0 +1,8 @@
+<div class="container mx-auto p-6 border border-green-50 m-4 rounded-3xl shadow-lg bg-white">
+    <h1 class="text-3xl font-bold mb-6 text-emerald-800 border-b border-green-100 pb-4">Cartelera</h1>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        @for (peli of cartelera; track $index) {
+        <app-movie-card [movie]="peli"></app-movie-card>
+        }
+    </div>
+</div>
