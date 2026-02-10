@@ -31,6 +31,10 @@ export const routes: Routes = [
         loadComponent: () => import('../pages/series/series').then(m => m.Series)
     },
     {
+        path: 'series/:id',
+        loadComponent: () => import('../pages/series-detail/series-detail').then(m => m.SeriesDetail)
+    },
+    {
         path: '**',
         pathMatch: 'full',
         redirectTo: 'home'

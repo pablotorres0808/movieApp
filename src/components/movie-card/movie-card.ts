@@ -43,8 +43,7 @@ export class MovieCard {
   //Declaracion del metodo navigateToDetails
   navigateToDetails() {
     if ((this.movie as any).isTV) {
-      // For now, series don't have a detail page, so we could just return or show an alert
-      console.log('Series detail page not implemented yet');
+      this.router.navigateByUrl(`/series/${this.movie.id}`)
       return;
     }
     this.router.navigateByUrl(`/movie/${this.movie.id}`)

@@ -28,4 +28,8 @@ export class MovieService {
   obtenerSeries() {
     return this.http.get<Response>(`${this.API_URL}tv/top_rated?language=es-ES&api_key=${this.API_KEY}`)
   }
+
+  obtenerSerieDetail(id: string) {
+    return this.http.get<any>(`${this.API_URL}tv/${id}?language=es-ES&api_key=${this.API_KEY}`)
+  }
 }
