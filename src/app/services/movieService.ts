@@ -52,4 +52,24 @@ export class MovieService {
   obtenerSeriesSimilares(id: string) {
     return this.http.get<Response>(`${this.API_URL}tv/${id}/similar?language=es-ES&api_key=${this.API_KEY}`)
   }
+
+  obtenerReparto(id: string) {
+    return this.http.get<any>(`${this.API_URL}movie/${id}/credits?language=es-ES&api_key=${this.API_KEY}`)
+  }
+
+  obtenerRepartoSerie(id: string) {
+    return this.http.get<any>(`${this.API_URL}tv/${id}/credits?language=es-ES&api_key=${this.API_KEY}`)
+  }
+
+  obtenerSeriesPopulares() {
+    return this.http.get<Response>(`${this.API_URL}tv/top_rated?language=es-ES&api_key=${this.API_KEY}`)
+  }
+
+  buscarContenido(query: string) {
+    return this.http.get<any>(`${this.API_URL}search/multi?query=${query}&language=es-ES&api_key=${this.API_KEY}`)
+  }
+
+  obtenerPeliculasSimilares(id: string) {
+    return this.http.get<Response>(`${this.API_URL}movie/${id}/similar?language=es-ES&api_key=${this.API_KEY}`)
+  }
 }

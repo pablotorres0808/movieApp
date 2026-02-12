@@ -1,128 +1,121 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MovieService } from '../../app/services/movieService';
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { MovieCard } from '../../components/movie-card/movie-card';
 import { Result } from '../../app/interfaces/interface';
+import { ToastComponent } from '../../components/shared/toast/toast';
 
 @Component({
     selector: 'app-series-detail',
-    imports: [DecimalPipe, DatePipe, MovieCard],
-    templateUrl: './series-detail.html',
-    styles: `
-    :host {
-    display: block;
-}
-`,
-    changeDetection: ChangeDetectionStrategy.Default,
+    imports: [DecimalPipe, DatePipe, MovieCard, ToastComponent],
+    templateUrl: './series-detail.html'
 })
 export class SeriesDetail implements OnInit {
-    activeRoute = inject(ActivatedRoute)
-    movieS = inject(MovieService)
-    sanitizer = inject(DomSanitizer)
-    serie: any
-    playerUrl!: SafeResourceUrl
+    @ViewChild(ToastComponent) toast!: ToastComponent;
 
-    temporadaSeleccionada: number = 1
-    episodioSeleccionado: number = 1
-    episodios: any[] = []
-    servidorSeleccionado: string = 'vidsrc_to' // Default al mejor para latino
-    similares: Result[] = []
-    esFavorito: boolean = false
+    route = inject(ActivatedRoute);
+    movieS = inject(MovieService);
+    sanitizer = inject(DomSanitizer);
+
+    serie: any;
+    playerUrl!: SafeResourceUrl;
+    temporadaSeleccionada = 1;
+    episodioSeleccionado = 1;
+    episodios: any[] = [];
+    servidorSeleccionado = 'vidsrc_to';
+    similares: Result[] = [];
+    esFavorito = false;
+    cast: any[] = [];
 
     ngOnInit() {
-        const id = this.activeRoute.snapshot.paramMap.get('id')
-        if (id) {
-            this.obtenerSerie(id)
-        }
+        this.route.params.subscribe(params => {
+            const id = params['id'];
+            if (id) this.loadSerie(id);
+        });
     }
 
-    obtenerSerie(id: string) {
+    loadSerie(id: string) {
         this.movieS.obtenerSerieDetail(id).subscribe({
             next: (serie) => {
                 this.serie = serie;
-                this.cambiarTemporada(1); // Cargar temporada 1 por defecto
-                this.obtenerSimilares(serie.id.toString());
-                this.checkFavorito(serie.id);
+                this.cambiarTemporada(1);
+                this.loadSimilar(serie.id.toString());
+                this.loadCast(serie.id.toString());
+                this.checkFav(serie.id);
             },
-            error: (err) => { }
-        })
+            error: () => { }
+        });
     }
 
-    cambiarTemporada(num: number) {
-        this.temporadaSeleccionada = num;
-        this.episodioSeleccionado = 1; // Reset a episodio 1 al cambiar temporada
-        this.movieS.obtenerTemporada(this.serie.id, num).subscribe({
-            next: (temp) => {
-                this.episodios = temp.episodes;
-                this.actualizarPlayer();
+    cambiarTemporada(temp: number) {
+        this.temporadaSeleccionada = temp;
+        this.movieS.obtenerTemporada(this.serie.id.toString(), temp.toString()).subscribe({
+            next: (data) => {
+                this.episodios = data.episodes;
+                if (this.episodios.length > 0) {
+                    this.episodioSeleccionado = 1;
+                    this.updatePlayer();
+                }
             },
-            error: (err) => console.log('Error al obtener temporada', err)
-        })
+            error: () => { }
+        });
     }
 
-    cambiarEpisodio(num: number) {
-        this.episodioSeleccionado = num;
-        this.actualizarPlayer();
+    cambiarEpisodio(ep: number) {
+        this.episodioSeleccionado = ep;
+        this.updatePlayer();
     }
 
-    actualizarPlayer() {
+    updatePlayer() {
+        const url = `https://vidsrc.to/embed/tv/${this.serie.id}/${this.temporadaSeleccionada}/${this.episodioSeleccionado}`;
+        this.playerUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+    }
+
+    cambiarServidor(servidor: string) {
+        this.servidorSeleccionado = servidor;
         let url = '';
-        if (this.servidorSeleccionado === 'vidsrc_to') {
-            // Servidor 1 - Vidsrc.to (Mejor para Latino)
-            url = `https://vidsrc.to/embed/tv/${this.serie.id}/${this.temporadaSeleccionada}/${this.episodioSeleccionado}`;
-        } else if (this.servidorSeleccionado === 'vidsrc_me') {
-            // Servidor 2 - Vidsrc.me (Alternativa Latino)
-            url = `https://vidsrc.me/embed/tv?tmdb=${this.serie.id}&season=${this.temporadaSeleccionada}&episode=${this.episodioSeleccionado}`;
-        } else if (this.servidorSeleccionado === 'embed_su') {
-            // Servidor 3 - Embed.su (Multi-idioma)
-            url = `https://embed.su/embed/tv/${this.serie.id}/${this.temporadaSeleccionada}/${this.episodioSeleccionado}`;
-        } else if (this.servidorSeleccionado === 'two_embed') {
-            // Servidor 4 - 2embed (Buena cobertura)
-            url = `https://www.2embed.cc/embedtv/${this.serie.id}&s=${this.temporadaSeleccionada}&e=${this.episodioSeleccionado}`;
-        } else if (this.servidorSeleccionado === 'vidlink') {
-            // Servidor 5 - VidLink (Rápido)
-            url = `https://vidlink.pro/tv/${this.serie.id}/${this.temporadaSeleccionada}/${this.episodioSeleccionado}`;
-        } else {
-            // Servidor 6 - Multiembed (Backup)
-            url = `https://multiembed.mov/?video_id=${this.serie.id}&tmdb=1&s=${this.temporadaSeleccionada}&e=${this.episodioSeleccionado}`;
+        const s = this.temporadaSeleccionada;
+        const e = this.episodioSeleccionado;
+        switch (servidor) {
+            case 'vidsrc_to': url = `https://vidsrc.to/embed/tv/${this.serie.id}/${s}/${e}`; break;
+            case 'vidsrc_xyz': url = `https://vidsrc.xyz/embed/tv/${this.serie.id}/${s}/${e}`; break;
+            case 'vidsrc_cc': url = `https://vidsrc.cc/v2/embed/tv/${this.serie.id}/${s}/${e}`; break;
+            case 'vidsrc_me': url = `https://vidsrc.me/embed/tv/${this.serie.id}/${s}/${e}`; break;
+            case 'vidlink': url = `https://vidlink.pro/tv/${this.serie.id}/${s}/${e}`; break;
+            case 'multiembed': url = `https://multiembed.mov/directstream.php?video_id=${this.serie.id}&tmdb=1&s=${s}&e=${e}`; break;
         }
         this.playerUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
     }
 
-    cambiarServidor(server: string) {
-        this.servidorSeleccionado = server;
-        this.actualizarPlayer();
-    }
-
-    obtenerSimilares(id: string) {
+    loadSimilar(id: string) {
         this.movieS.obtenerSeriesSimilares(id).subscribe({
             next: (resp) => {
-                this.similares = resp.results.slice(0, 4).map((tv: any) => ({
-                    ...tv,
-                    title: tv.name,
-                    release_date: tv.first_air_date,
-                    original_title: tv.original_name,
-                    isTV: true
-                }));
+                this.similares = resp.results.slice(0, 12).map(s => ({ ...s, isTV: true }));
             },
-            error: (err) => console.log('Error similares series', err)
-        })
+            error: () => { }
+        });
     }
 
-    checkFavorito(id: number) {
-        const favorites = JSON.parse(localStorage.getItem('favoritos') || '[]');
-        this.esFavorito = favorites.some((f: any) => f.id === id);
+    loadCast(id: string) {
+        this.movieS.obtenerRepartoSerie(id).subscribe({
+            next: (resp) => this.cast = resp.cast.slice(0, 10),
+            error: () => { }
+        });
+    }
+
+    checkFav(id: number) {
+        const favs = JSON.parse(localStorage.getItem('favoritos') || '[]');
+        this.esFavorito = favs.some((f: any) => f.id === id);
     }
 
     toggleFavorito() {
-        const favorites = JSON.parse(localStorage.getItem('favoritos') || '[]');
+        let favs = JSON.parse(localStorage.getItem('favoritos') || '[]');
         if (this.esFavorito) {
-            const index = favorites.findIndex((f: any) => f.id === this.serie.id);
-            favorites.splice(index, 1);
+            favs = favs.filter((f: any) => f.id !== this.serie.id);
         } else {
-            favorites.push({
+            favs.push({
                 id: this.serie.id,
                 title: this.serie.name,
                 poster_path: this.serie.poster_path,
@@ -132,7 +125,23 @@ export class SeriesDetail implements OnInit {
                 isTV: true
             });
         }
-        localStorage.setItem('favoritos', JSON.stringify(favorites));
+        localStorage.setItem('favoritos', JSON.stringify(favs));
         this.esFavorito = !this.esFavorito;
+
+        if (this.toast) {
+            this.toast.show(
+                this.esFavorito ? `"${this.serie.name}" añadida a Mi Lista` : `"${this.serie.name}" eliminada de Mi Lista`,
+                true
+            );
+        }
+    }
+
+    onFavoriteToggled(event: { added: boolean, title: string }) {
+        if (this.toast) {
+            this.toast.show(
+                event.added ? `"${event.title}" añadida a Mi Lista` : `"${event.title}" eliminada de Mi Lista`,
+                true
+            );
+        }
     }
 }

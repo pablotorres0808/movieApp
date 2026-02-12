@@ -1,12 +1,13 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, ViewChild } from '@angular/core';
 import { debounceTime, distinctUntilChanged, Subject, switchMap } from 'rxjs';
 import { MovieService } from '../../app/services/movieService';
 import { Result } from '../../app/interfaces/interface';
 import { MovieCard } from '../../components/movie-card/movie-card';
+import { ToastComponent } from '../../components/shared/toast/toast';
 
 @Component({
   selector: 'app-cartelera',
-  imports: [MovieCard],
+  imports: [MovieCard, ToastComponent],
   templateUrl: './cartelera.html',
   styles: `
     :host {
@@ -16,6 +17,7 @@ import { MovieCard } from '../../components/movie-card/movie-card';
   changeDetection: ChangeDetectionStrategy.Default,
 })
 export class Cartelera implements OnInit {
+  @ViewChild(ToastComponent) toast!: ToastComponent;
   cartelera: Result[] = []
   originalCartelera: Result[] = []
   movieS = inject(MovieService)
@@ -57,5 +59,14 @@ export class Cartelera implements OnInit {
   onSearch(event: Event) {
     const query = (event.target as HTMLInputElement).value;
     this.searchSubject.next(query);
+  }
+
+  onFavoriteToggled(event: { added: boolean, title: string }) {
+    if (this.toast) {
+      this.toast.show(
+        event.added ? `"${event.title}" añadida a Mi Lista` : `"${event.title}" eliminada de Mi Lista`,
+        true
+      );
+    }
   }
 }

@@ -1,102 +1,95 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { Component, inject, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MovieService } from '../../app/services/movieService';
 import { MovieDetail, Result } from '../../app/interfaces/interface';
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { MovieCard } from '../../components/movie-card/movie-card';
+import { ToastComponent } from '../../components/shared/toast/toast';
 
 @Component({
   selector: 'app-movie',
-  imports: [DecimalPipe, DatePipe, MovieCard],
-  templateUrl: './movie.html',
-  styles: `
-    :host {
-      display: block;
-    }
-  `,
-  changeDetection: ChangeDetectionStrategy.Default,
+  imports: [DecimalPipe, DatePipe, MovieCard, ToastComponent],
+  templateUrl: './movie.html'
 })
 export class Movie {
-  activeRoute = inject(ActivatedRoute)
-  movieS = inject(MovieService)
-  sanitizer = inject(DomSanitizer)
-  movie!: MovieDetail
-  playerUrl!: SafeResourceUrl
-  servidorSeleccionado: string = 'vidsrc_to' // Default al mejor para latino
-  similares: Result[] = []
-  esFavorito: boolean = false
+  @ViewChild(ToastComponent) toast!: ToastComponent;
+
+  route = inject(ActivatedRoute);
+  movieS = inject(MovieService);
+  sanitizer = inject(DomSanitizer);
+
+  movie!: MovieDetail;
+  playerUrl!: SafeResourceUrl;
+  servidorSeleccionado = 'vidsrc_to';
+  similares: Result[] = [];
+  esFavorito = false;
+  cast: any[] = [];
 
   constructor() {
-    const id = this.activeRoute.snapshot.paramMap.get('id')
-    if (id) {
-      this.obtenerMovie(id)
-    }
+    this.route.params.subscribe(params => {
+      const id = params['id'];
+      if (id) this.loadMovie(id);
+    });
   }
 
-  //Declaracion de funcion para obtener los detalles de la pelicula
-  obtenerMovie(id: string) {
-    this.movieS.obtenerMovie(id).subscribe(
-      {
-        next: (movie) => {
-          this.movie = movie;
-          this.actualizarPlayer();
-          this.obtenerSimilares(movie.id.toString());
-          this.checkFavorito(movie.id);
-        },
-        error: (err) => { }
-      }
-    )
+  loadMovie(id: string) {
+    this.movieS.obtenerMovie(id).subscribe({
+      next: (movie) => {
+        this.movie = movie;
+        this.updatePlayer();
+        this.loadSimilar(movie.id.toString());
+        this.loadCast(movie.id.toString());
+        this.checkFav(movie.id);
+      },
+      error: () => { }
+    });
   }
 
-  cambiarServidor(server: string) {
-    this.servidorSeleccionado = server;
-    this.actualizarPlayer();
+  updatePlayer() {
+    const url = `https://vidsrc.to/embed/movie/${this.movie.id}`;
+    this.playerUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }
 
-  actualizarPlayer() {
+  cambiarServidor(servidor: string) {
+    this.servidorSeleccionado = servidor;
     let url = '';
-    if (this.servidorSeleccionado === 'vidsrc_to') {
-      // Servidor 1 - Vidsrc.to (Mejor para Latino)
-      url = `https://vidsrc.to/embed/movie/${this.movie.id}`;
-    } else if (this.servidorSeleccionado === 'vidsrc_me') {
-      // Servidor 2 - Vidsrc.me (Alternativa Latino)
-      url = `https://vidsrc.me/embed/movie?tmdb=${this.movie.id}`;
-    } else if (this.servidorSeleccionado === 'embed_su') {
-      // Servidor 3 - Embed.su (Multi-idioma)
-      url = `https://embed.su/embed/movie/${this.movie.id}`;
-    } else if (this.servidorSeleccionado === 'two_embed') {
-      // Servidor 4 - 2embed (Buena cobertura)
-      url = `https://www.2embed.cc/embed/${this.movie.id}`;
-    } else if (this.servidorSeleccionado === 'vidlink') {
-      // Servidor 5 - VidLink (Rápido)
-      url = `https://vidlink.pro/movie/${this.movie.id}`;
-    } else {
-      // Servidor 6 - Multiembed (Backup)
-      url = `https://multiembed.mov/?video_id=${this.movie.id}&tmdb=1`;
+    switch (servidor) {
+      case 'vidsrc_to': url = `https://vidsrc.to/embed/movie/${this.movie.id}`; break;
+      case 'vidsrc_xyz': url = `https://vidsrc.xyz/embed/movie/${this.movie.id}`; break;
+      case 'vidsrc_cc': url = `https://vidsrc.cc/v2/embed/movie/${this.movie.id}`; break;
+      case 'vidsrc_me': url = `https://vidsrc.me/embed/movie/${this.movie.id}`; break;
+      case 'vidlink': url = `https://vidlink.pro/movie/${this.movie.id}`; break;
+      case 'multiembed': url = `https://multiembed.mov/directstream.php?video_id=${this.movie.id}&tmdb=1`; break;
     }
     this.playerUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }
 
-  obtenerSimilares(id: string) {
-    this.movieS.obtenerSimilares(id).subscribe({
-      next: (resp) => this.similares = resp.results.slice(0, 4),
-      error: (err) => console.log('Error similares', err)
-    })
+  loadSimilar(id: string) {
+    this.movieS.obtenerPeliculasSimilares(id).subscribe({
+      next: (resp) => this.similares = resp.results.slice(0, 12),
+      error: () => { }
+    });
   }
 
-  checkFavorito(id: number) {
-    const favorites = JSON.parse(localStorage.getItem('favoritos') || '[]');
-    this.esFavorito = favorites.some((f: any) => f.id === id);
+  loadCast(id: string) {
+    this.movieS.obtenerReparto(id).subscribe({
+      next: (resp) => this.cast = resp.cast.slice(0, 10),
+      error: () => { }
+    });
+  }
+
+  checkFav(id: number) {
+    const favs = JSON.parse(localStorage.getItem('favoritos') || '[]');
+    this.esFavorito = favs.some((f: any) => f.id === id);
   }
 
   toggleFavorito() {
-    const favorites = JSON.parse(localStorage.getItem('favoritos') || '[]');
+    let favs = JSON.parse(localStorage.getItem('favoritos') || '[]');
     if (this.esFavorito) {
-      const index = favorites.findIndex((f: any) => f.id === this.movie.id);
-      favorites.splice(index, 1);
+      favs = favs.filter((f: any) => f.id !== this.movie.id);
     } else {
-      favorites.push({
+      favs.push({
         id: this.movie.id,
         title: this.movie.title,
         poster_path: this.movie.poster_path,
@@ -106,7 +99,23 @@ export class Movie {
         isTV: false
       });
     }
-    localStorage.setItem('favoritos', JSON.stringify(favorites));
+    localStorage.setItem('favoritos', JSON.stringify(favs));
     this.esFavorito = !this.esFavorito;
+
+    if (this.toast) {
+      this.toast.show(
+        this.esFavorito ? `"${this.movie.title}" añadida a Mi Lista` : `"${this.movie.title}" eliminada de Mi Lista`,
+        true
+      );
+    }
+  }
+
+  onFavoriteToggled(event: { added: boolean, title: string }) {
+    if (this.toast) {
+      this.toast.show(
+        event.added ? `"${event.title}" añadida a Mi Lista` : `"${event.title}" eliminada de Mi Lista`,
+        true
+      );
+    }
   }
 }
