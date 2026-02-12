@@ -21,7 +21,7 @@ export class Movie {
 
   movie!: MovieDetail;
   playerUrl!: SafeResourceUrl;
-  servidorSeleccionado = 'vidsrc_to';
+  servidorSeleccionado = 'vidsrc_icu';
   similares: Result[] = [];
   esFavorito = false;
   cast: any[] = [];
@@ -47,7 +47,7 @@ export class Movie {
   }
 
   updatePlayer() {
-    const url = `https://vidsrc.to/embed/movie/${this.movie.id}`;
+    const url = `https://vidsrc.icu/embed/movie/${this.movie.id}`;
     this.playerUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }
 
@@ -57,8 +57,10 @@ export class Movie {
     switch (servidor) {
       case 'vidsrc_to': url = `https://vidsrc.to/embed/movie/${this.movie.id}`; break;
       case 'vidsrc_xyz': url = `https://vidsrc.xyz/embed/movie/${this.movie.id}`; break;
-      case 'vidsrc_cc': url = `https://vidsrc.cc/v2/embed/movie/${this.movie.id}`; break;
       case 'vidsrc_me': url = `https://vidsrc.me/embed/movie/${this.movie.id}`; break;
+      case 'vidsrc_icu': url = `https://vidsrc.icu/embed/movie/${this.movie.id}`; break;
+      case 'vidsrc_net': url = `https://vidsrc.net/embed/movie/${this.movie.id}`; break;
+      case 'embed_su': url = `https://embed.su/embed/movie/${this.movie.id}`; break;
       case 'vidlink': url = `https://vidlink.pro/movie/${this.movie.id}`; break;
       case 'multiembed': url = `https://multiembed.mov/directstream.php?video_id=${this.movie.id}&tmdb=1`; break;
     }

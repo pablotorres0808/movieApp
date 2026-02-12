@@ -24,7 +24,7 @@ export class SeriesDetail implements OnInit {
     temporadaSeleccionada = 1;
     episodioSeleccionado = 1;
     episodios: any[] = [];
-    servidorSeleccionado = 'vidsrc_to';
+    servidorSeleccionado = 'vidsrc_icu';
     similares: Result[] = [];
     esFavorito = false;
     cast: any[] = [];
@@ -51,7 +51,7 @@ export class SeriesDetail implements OnInit {
 
     cambiarTemporada(temp: number) {
         this.temporadaSeleccionada = temp;
-        this.movieS.obtenerTemporada(this.serie.id.toString(), temp.toString()).subscribe({
+        this.movieS.obtenerTemporada(this.serie.id.toString(), temp).subscribe({
             next: (data) => {
                 this.episodios = data.episodes;
                 if (this.episodios.length > 0) {
@@ -69,7 +69,7 @@ export class SeriesDetail implements OnInit {
     }
 
     updatePlayer() {
-        const url = `https://vidsrc.to/embed/tv/${this.serie.id}/${this.temporadaSeleccionada}/${this.episodioSeleccionado}`;
+        const url = `https://vidsrc.icu/embed/tv/${this.serie.id}/${this.temporadaSeleccionada}/${this.episodioSeleccionado}`;
         this.playerUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
     }
 
@@ -81,8 +81,10 @@ export class SeriesDetail implements OnInit {
         switch (servidor) {
             case 'vidsrc_to': url = `https://vidsrc.to/embed/tv/${this.serie.id}/${s}/${e}`; break;
             case 'vidsrc_xyz': url = `https://vidsrc.xyz/embed/tv/${this.serie.id}/${s}/${e}`; break;
-            case 'vidsrc_cc': url = `https://vidsrc.cc/v2/embed/tv/${this.serie.id}/${s}/${e}`; break;
             case 'vidsrc_me': url = `https://vidsrc.me/embed/tv/${this.serie.id}/${s}/${e}`; break;
+            case 'vidsrc_icu': url = `https://vidsrc.icu/embed/tv/${this.serie.id}/${s}/${e}`; break;
+            case 'vidsrc_net': url = `https://vidsrc.net/embed/tv/${this.serie.id}/${s}/${e}`; break;
+            case 'embed_su': url = `https://embed.su/embed/tv/${this.serie.id}/${s}/${e}`; break;
             case 'vidlink': url = `https://vidlink.pro/tv/${this.serie.id}/${s}/${e}`; break;
             case 'multiembed': url = `https://multiembed.mov/directstream.php?video_id=${this.serie.id}&tmdb=1&s=${s}&e=${e}`; break;
         }

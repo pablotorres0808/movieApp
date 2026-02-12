@@ -106,19 +106,26 @@
             <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
                 <h3 class="text-3xl font-bold text-white">Ver Ahora</h3>
                 <div class="flex bg-zinc-900 p-1 rounded-lg gap-1 overflow-x-auto">
+                    <button (click)="cambiarServidor('vidsrc_icu')"
+                        [class.bg-red-600]="servidorSeleccionado === 'vidsrc_icu'"
+                        [class.text-white]="servidorSeleccionado === 'vidsrc_icu'"
+                        [class.text-gray-400]="servidorSeleccionado !== 'vidsrc_icu'"
+                        class="px-4 py-2 rounded text-sm font-semibold transition-all whitespace-nowrap hover:text-white">
+                        🇲🇽 Latino 1
+                    </button>
+                    <button (click)="cambiarServidor('vidsrc_net')"
+                        [class.bg-red-600]="servidorSeleccionado === 'vidsrc_net'"
+                        [class.text-white]="servidorSeleccionado === 'vidsrc_net'"
+                        [class.text-gray-400]="servidorSeleccionado !== 'vidsrc_net'"
+                        class="px-4 py-2 rounded text-sm font-semibold transition-all whitespace-nowrap hover:text-white">
+                        🇲🇽 Latino 2
+                    </button>
                     <button (click)="cambiarServidor('vidsrc_to')"
                         [class.bg-red-600]="servidorSeleccionado === 'vidsrc_to'"
                         [class.text-white]="servidorSeleccionado === 'vidsrc_to'"
                         [class.text-gray-400]="servidorSeleccionado !== 'vidsrc_to'"
                         class="px-4 py-2 rounded text-sm font-semibold transition-all whitespace-nowrap hover:text-white">
-                        🇲🇽 Latino 1
-                    </button>
-                    <button (click)="cambiarServidor('vidsrc_me')"
-                        [class.bg-red-600]="servidorSeleccionado === 'vidsrc_me'"
-                        [class.text-white]="servidorSeleccionado === 'vidsrc_me'"
-                        [class.text-gray-400]="servidorSeleccionado !== 'vidsrc_me'"
-                        class="px-4 py-2 rounded text-sm font-semibold transition-all whitespace-nowrap hover:text-white">
-                        🇲🇽 Latino 2
+                        🇺🇸 English 1
                     </button>
                     <button (click)="cambiarServidor('embed_su')"
                         [class.bg-red-600]="servidorSeleccionado === 'embed_su'"
@@ -127,25 +134,18 @@
                         class="px-4 py-2 rounded text-sm font-semibold transition-all whitespace-nowrap hover:text-white">
                         🌎 Multi
                     </button>
-                    <button (click)="cambiarServidor('two_embed')"
-                        [class.bg-red-600]="servidorSeleccionado === 'two_embed'"
-                        [class.text-white]="servidorSeleccionado === 'two_embed'"
-                        [class.text-gray-400]="servidorSeleccionado !== 'two_embed'"
-                        class="px-4 py-2 rounded text-sm font-semibold transition-all whitespace-nowrap hover:text-white">
-                        Servidor 4
-                    </button>
                     <button (click)="cambiarServidor('vidlink')" [class.bg-red-600]="servidorSeleccionado === 'vidlink'"
                         [class.text-white]="servidorSeleccionado === 'vidlink'"
                         [class.text-gray-400]="servidorSeleccionado !== 'vidlink'"
                         class="px-4 py-2 rounded text-sm font-semibold transition-all whitespace-nowrap hover:text-white">
-                        Servidor 5
+                        Servidor 4
                     </button>
                     <button (click)="cambiarServidor('multiembed')"
                         [class.bg-red-600]="servidorSeleccionado === 'multiembed'"
                         [class.text-white]="servidorSeleccionado === 'multiembed'"
                         [class.text-gray-400]="servidorSeleccionado !== 'multiembed'"
                         class="px-4 py-2 rounded text-sm font-semibold transition-all whitespace-nowrap hover:text-white">
-                        Servidor 6
+                        Servidor 5
                     </button>
                 </div>
             </div>
