@@ -6,6 +6,7 @@ import { DatePipe, DecimalPipe } from '@angular/common';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { MovieCard } from '../../components/movie-card/movie-card';
 import { ToastComponent } from '../../components/shared/toast/toast';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-movie',
@@ -47,19 +48,21 @@ export class Movie {
   }
 
   updatePlayer() {
-    const url = `https://vidsrc.icu/embed/movie/${this.movie.id}`;
+    const key = (environment as any).vimeus_key;
+    const url = `https://vidsrc.icu/embed/movie/${this.movie.id}?vsrc=${key}`;
     this.playerUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }
 
   cambiarServidor(servidor: string) {
     this.servidorSeleccionado = servidor;
     let url = '';
+    const key = (environment as any).vimeus_key;
     switch (servidor) {
       case 'vidsrc_to': url = `https://vidsrc.to/embed/movie/${this.movie.id}`; break;
       case 'vidsrc_xyz': url = `https://vidsrc.xyz/embed/movie/${this.movie.id}`; break;
       case 'vidsrc_me': url = `https://vidsrc.me/embed/movie/${this.movie.id}`; break;
-      case 'vidsrc_icu': url = `https://vidsrc.icu/embed/movie/${this.movie.id}`; break;
-      case 'vidsrc_net': url = `https://vidsrc.net/embed/movie/${this.movie.id}`; break;
+      case 'vidsrc_icu': url = `https://vidsrc.icu/embed/movie/${this.movie.id}?vsrc=${key}`; break;
+      case 'vidsrc_net': url = `https://vidsrc.net/embed/movie/${this.movie.id}?vsrc=${key}`; break;
       case 'embed_su': url = `https://embed.su/embed/movie/${this.movie.id}`; break;
       case 'vidlink': url = `https://vidlink.pro/movie/${this.movie.id}`; break;
       case 'multiembed': url = `https://multiembed.mov/directstream.php?video_id=${this.movie.id}&tmdb=1`; break;

@@ -6,6 +6,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { MovieCard } from '../../components/movie-card/movie-card';
 import { Result } from '../../app/interfaces/interface';
 import { ToastComponent } from '../../components/shared/toast/toast';
+import { environment } from '../../environments/environment';
 
 @Component({
     selector: 'app-series-detail',
@@ -69,7 +70,8 @@ export class SeriesDetail implements OnInit {
     }
 
     updatePlayer() {
-        const url = `https://vidsrc.icu/embed/tv/${this.serie.id}/${this.temporadaSeleccionada}/${this.episodioSeleccionado}`;
+        const key = (environment as any).vimeus_key;
+        const url = `https://vidsrc.icu/embed/tv/${this.serie.id}/${this.temporadaSeleccionada}/${this.episodioSeleccionado}?vsrc=${key}`;
         this.playerUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
     }
 
@@ -78,12 +80,13 @@ export class SeriesDetail implements OnInit {
         let url = '';
         const s = this.temporadaSeleccionada;
         const e = this.episodioSeleccionado;
+        const key = (environment as any).vimeus_key;
         switch (servidor) {
             case 'vidsrc_to': url = `https://vidsrc.to/embed/tv/${this.serie.id}/${s}/${e}`; break;
             case 'vidsrc_xyz': url = `https://vidsrc.xyz/embed/tv/${this.serie.id}/${s}/${e}`; break;
             case 'vidsrc_me': url = `https://vidsrc.me/embed/tv/${this.serie.id}/${s}/${e}`; break;
-            case 'vidsrc_icu': url = `https://vidsrc.icu/embed/tv/${this.serie.id}/${s}/${e}`; break;
-            case 'vidsrc_net': url = `https://vidsrc.net/embed/tv/${this.serie.id}/${s}/${e}`; break;
+            case 'vidsrc_icu': url = `https://vidsrc.icu/embed/tv/${this.serie.id}/${s}/${e}?vsrc=${key}`; break;
+            case 'vidsrc_net': url = `https://vidsrc.net/embed/tv/${this.serie.id}/${s}/${e}?vsrc=${key}`; break;
             case 'embed_su': url = `https://embed.su/embed/tv/${this.serie.id}/${s}/${e}`; break;
             case 'vidlink': url = `https://vidlink.pro/tv/${this.serie.id}/${s}/${e}`; break;
             case 'multiembed': url = `https://multiembed.mov/directstream.php?video_id=${this.serie.id}&tmdb=1&s=${s}&e=${e}`; break;
